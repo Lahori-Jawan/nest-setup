@@ -1,5 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { messages } from 'src/app/common/messages';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -9,19 +15,33 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+  async registerUser(createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    user['accessToken'] = this.createToken({ id: user.id });
+
+    return user;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  async loginUser({ email, password }) {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) throw new NotFoundException(messages.USER_NOT_FOUND);
+
+    const isPasswordMatch = await user.validatePassword(password);
+
+    if (!isPasswordMatch)
+      throw new BadRequestException(messages.BAD_LOGIN_REQUEST);
+
+    user['accessToken'] = this.createToken({ id: user.id });
+
+    // const [error] = await trycatch(user.save());
+
+    // if (error) throw new ServerException();
+
+    return user;
+  }
+
+  createToken(payload) {
+    return this.jwtService.sign(payload);
   }
 }
