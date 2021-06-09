@@ -1,0 +1,25 @@
+import { Logger, Provider, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { Connection, getConnection } from 'typeorm';
+import { Request } from 'express';
+import { Tenant } from './entities/tenant.entity';
+
+export const TENANT_CONNECTION = 'TENANT_CONNECTION';
+
+const logger = new Logger('TenantConnectionProvider')
+
+export const TenantConnectionProvider: Provider = {
+  provide: TENANT_CONNECTION,
+  inject: [REQUEST, Connection],
+  scope: Scope.REQUEST,
+  useFactory: async (req: Request, connection: Connection) => {
+    const connectionName: string = req.params['tenant']; //* req.headers['x-team-id']
+    logger.log({provider: connectionName})
+    const tenant: Tenant = await connection
+      .getRepository(Tenant)
+      .findOne({ where: { name: connectionName } });
+
+    return getConnection(tenant.name);
+
+  },
+};
