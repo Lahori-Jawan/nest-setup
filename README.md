@@ -1,10 +1,12 @@
 ## How to run
 
-This is a very basic nest app, setup with jwt auth globally. So in order to make certain
-routes public, use `Public` decorator as can be seen on `app` controller.
+This is based on simple nest app of `master` branch & here we connect to mssql db. We also
+have migrations for `User` entity with `email` & `password` flow setup.
 
-There is no database connections so simply run following command to test it.
+## Make sure MSSQL is up & running
+
+First use correct crentials for DB connection in `.env` file and then run migrations
 
 ```
-npm run start:dev
+npm run db:modules:run
 ```

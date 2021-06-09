@@ -1,34 +1,27 @@
-// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-// import { AuthService } from './auth.service';
-// import { CreateAuthDto } from './dto/create-auth.dto';
-// import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Public } from 'src/app/common/auth/public.meta';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { AuthService } from './auth.service';
 
-// @Controller('auth')
-// export class AuthController {
-//   constructor(private readonly authService: AuthService) {}
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
-//   @Post()
-//   create(@Body() createAuthDto: CreateAuthDto) {
-//     return this.authService.create(createAuthDto);
-//   }
+  @Public()
+  @Post('register')
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.authService.registerUser(createUserDto);
+  }
 
-//   @Get()
-//   findAll() {
-//     return this.authService.findAll();
-//   }
+  @Public()
+  @Post('login')
+  login(@Body() loginUserDto: any) {
+    return this.authService.loginUser(loginUserDto);
+  }
 
-//   @Get(':id')
-//   findOne(@Param('id') id: string) {
-//     return this.authService.findOne(+id);
-//   }
-
-//   @Patch(':id')
-//   update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-//     return this.authService.update(+id, updateAuthDto);
-//   }
-
-//   @Delete(':id')
-//   remove(@Param('id') id: string) {
-//     return this.authService.remove(+id);
-//   }
-// }
+  @Public()
+  @Get('health/ping')
+  findAll() {
+    return 'doing good? hell yeah!';
+  }
+}
