@@ -90,7 +90,8 @@ export class TenantModule implements NestModule {
             this.logger.log({ config });
 
             const connection = await createConnection(config);
-            // await connection.runMigrations({ transaction: 'none' });
+            //! comment this line for error 'object "users" already exists'
+            await connection.runMigrations({ transaction: 'none' });
 
             this.logger.log(
               `connection created? ${connection?.isConnected}, connection name -> ${connection.name}`,
@@ -103,7 +104,10 @@ export class TenantModule implements NestModule {
           throw new ServerException();
         }
       })
-      .exclude({ path: '/api/tenants', method: RequestMethod.ALL })
+      .exclude({
+        path: '/api/(tenants|auth/login|auth/register)',
+        method: RequestMethod.ALL,
+      })
       .forRoutes('*');
   }
 }

@@ -20,6 +20,6 @@ export const TenantConnectionProvider: Provider = {
       .getRepository(Tenant)
       .findOne({ where: { name: connectionName } });
 
-    return getConnection(tenant.name);
+    return getConnection(tenant?.name);
   },
 };

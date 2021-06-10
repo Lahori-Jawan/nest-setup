@@ -7,15 +7,17 @@ import { Tenant } from './entities/tenant.entity';
 
 @Injectable()
 export class TenantService {
-  logger = new Logger(TenantService.name)
+  logger = new Logger(TenantService.name);
 
   constructor(
     private readonly connection: Connection,
-    @InjectRepository(Tenant) private tenantRepository: Repository<Tenant>
-  ) {}
+    @InjectRepository(Tenant) private tenantRepository: Repository<Tenant>,
+  ) {
+    this.logger.verbose(`connectionName: ${connection.name}`);
+  }
 
   async create(createTenantDto: CreateTenantDto) {
-    return await this.tenantRepository.save(createTenantDto)
+    return await this.tenantRepository.save(createTenantDto);
   }
 
   findAll() {
@@ -23,7 +25,9 @@ export class TenantService {
   }
 
   findByName(name: string) {
-    this.logger.warn(`findByName: tenantName: ${name}, connectionName: ${this.connection.name}`)
-    return this.tenantRepository.findOne({name});
+    this.logger.warn(
+      `findByName: tenantName: ${name}, connectionName: ${this.connection.name}`,
+    );
+    return this.tenantRepository.findOne({ name });
   }
 }

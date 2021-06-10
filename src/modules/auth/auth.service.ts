@@ -5,6 +5,7 @@ import {
   Scope,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { DEFAULT_TENANT } from '@src/app/common/constants/app';
 import { messages } from 'src/app/common/messages';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
@@ -16,14 +17,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registerUser(createUserDto: CreateUserDto) {
+  async registerUser(createUserDto: CreateUserDto, tenantName: string) {
     const user = await this.userService.create(createUserDto);
-    user['accessToken'] = this.createToken({ id: user.id });
+    user['accessToken'] = this.createToken({ id: user.id }, [tenantName]);
 
     return user;
   }
 
-  async loginUser({ email, password }) {
+  async loginUser({ email, password }, tenantName: string) {
     const user = await this.userService.findByEmail(email);
 
     if (!user) throw new NotFoundException(messages.USER_NOT_FOUND);
@@ -33,7 +34,7 @@ export class AuthService {
     if (!isPasswordMatch)
       throw new BadRequestException(messages.BAD_LOGIN_REQUEST);
 
-    user['accessToken'] = this.createToken({ id: user.id });
+    user['accessToken'] = this.createToken({ id: user.id }, [tenantName]);
 
     // const [error] = await trycatch(user.save());
 
@@ -46,7 +47,7 @@ export class AuthService {
     return this.userService.getUser(id);
   }
 
-  createToken(payload) {
-    return this.jwtService.sign(payload);
+  private createToken(payload, audience: string[] = [DEFAULT_TENANT]) {
+    return this.jwtService.sign(payload, { audience });
   }
 }

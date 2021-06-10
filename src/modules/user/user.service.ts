@@ -48,7 +48,7 @@ export class UserService {
   }
 
   async getUser(id: number) {
-    this.logger.debug(`connection to get user is ${this.conn.name}`);
+    this.logger.debug(`connection to 'getUser' is ${this.conn.name}`);
     const user = await this.userRepository.findOne(id);
 
     if (!user) {
