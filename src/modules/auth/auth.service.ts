@@ -2,13 +2,14 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Scope,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { messages } from 'src/app/common/messages';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   constructor(
     private userService: UserService,
@@ -39,6 +40,10 @@ export class AuthService {
     // if (error) throw new ServerException();
 
     return user;
+  }
+
+  getUser(id: number) {
+    return this.userService.getUser(id);
   }
 
   createToken(payload) {

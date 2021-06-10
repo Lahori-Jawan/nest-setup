@@ -6,20 +6,20 @@ import { Tenant } from './entities/tenant.entity';
 
 export const TENANT_CONNECTION = 'TENANT_CONNECTION';
 
-const logger = new Logger('TenantConnectionProvider')
+const logger = new Logger('TenantConnectionProvider');
 
 export const TenantConnectionProvider: Provider = {
   provide: TENANT_CONNECTION,
   inject: [REQUEST, Connection],
   scope: Scope.REQUEST,
   useFactory: async (req: Request, connection: Connection) => {
+    console.log('req================', req.params);
     const connectionName: string = req.params['tenant']; //* req.headers['x-team-id']
-    logger.log({provider: connectionName})
+    logger.log({ provider: connectionName });
     const tenant: Tenant = await connection
       .getRepository(Tenant)
       .findOne({ where: { name: connectionName } });
 
     return getConnection(tenant.name);
-
   },
 };
