@@ -31,8 +31,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!aud.includes(tenant)) {
       throw new UnauthorizedException();
     }
-
-    request.params.tenant = request.params.tenant || tenant;
     // const authService: AuthService = await this.moduleRef.resolve(
     //   AuthService,
     //   contextId,

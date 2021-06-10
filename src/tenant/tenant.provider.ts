@@ -3,6 +3,7 @@ import { REQUEST } from '@nestjs/core';
 import { Connection, getConnection } from 'typeorm';
 import { Request } from 'express';
 import { Tenant } from './entities/tenant.entity';
+import { DEFAULT_TENANT } from '@src/app/common/constants/app';
 
 export const TENANT_CONNECTION = 'TENANT_CONNECTION';
 
@@ -19,6 +20,8 @@ export const TenantConnectionProvider: Provider = {
     const tenant: Tenant = await connection
       .getRepository(Tenant)
       .findOne({ where: { name: connectionName } });
+
+    req.params.tenant = req.params?.tenant || DEFAULT_TENANT;
 
     return getConnection(tenant?.name);
   },
