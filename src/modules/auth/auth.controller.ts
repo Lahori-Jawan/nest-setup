@@ -20,10 +20,4 @@ export class AuthController {
   login(@Req() req: Request, @Body() loginUserDto: any) {
     return this.authService.loginUser(loginUserDto, req.params.tenant);
   }
-
-  @Public()
-  @Get('health/ping')
-  findAll() {
-    return 'doing good? hell yeah!';
-  }
 }

@@ -105,7 +105,7 @@ export class TenantModule implements NestModule {
         }
       })
       .exclude({
-        path: '/api/(tenants|auth/login|auth/register)',
+        path: '/api/(tenants|auth/login|auth/register|status/health)',
         method: RequestMethod.ALL,
       })
       .forRoutes('*');
