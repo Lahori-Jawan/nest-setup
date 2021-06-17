@@ -13,7 +13,10 @@ EXPOSE 3000
 
 CMD ["npm", "run", "start:dev"]
 
-# -- production build - lightweight
+################
+## PRODUCTION ##
+################
+
 FROM node:14.16.0-alpine as production
 
 ARG NODE_ENV=production
