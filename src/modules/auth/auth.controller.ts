@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { Public } from 'src/app/common/auth/public.meta';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthService } from './auth.service';
@@ -7,21 +8,16 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Todo:: make it 'protected' for tenants user registration i.e. /lcs/api/auth/register
   @Public()
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.authService.registerUser(createUserDto);
+  create(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+    return this.authService.registerUser(createUserDto, req.params.tenant);
   }
 
   @Public()
   @Post('login')
-  login(@Body() loginUserDto: any) {
-    return this.authService.loginUser(loginUserDto);
-  }
-
-  @Public()
-  @Get('health/ping')
-  findAll() {
-    return 'doing good? hell yeah!';
+  login(@Req() req: Request, @Body() loginUserDto: any) {
+    return this.authService.loginUser(loginUserDto, req.params.tenant);
   }
 }
