@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import { join } from 'path';
 
 const result = dotenv.config();
 
@@ -9,11 +8,19 @@ if (result.error) {
 }
 
 export const isProd = process.env.NODE_ENV === 'production';
-console.log('environment', process.env.NODE_ENV, {isProd});
+console.log('\nenvironment', process.env.NODE_ENV, { isProd });
 
-export const ormConfig = {
+export const OrmConfig = {
   type: 'postgres' as 'postgres',
   url: process.env.DB_URL,
-  autoLoadEntities: true,
-  synchronize: true
+  entities: [
+    isProd
+      ? 'dist/**/**.entity{.ts,.js}'
+      : __dirname + './../../**/**.entity{.ts,.js}', //* path relative to ormConfig.ts
+  ],
+  synchronize: true,
+  seeds: ['src/database/seeds/**/*{.ts,.js}'],
+  factories: ['src/database/factories/**/*{.ts,.js}'],
 };
+
+// module.exports = ORMConfig;
